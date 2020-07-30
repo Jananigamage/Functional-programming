@@ -1,24 +1,33 @@
 
-
 object MyApp extends App {
   
+var bank:List[Account]=List()
+  
+}
+
+  class Account(id:String,no: Int, bal: Double) {
+    val nic:String=id
+    val accountNo: Int = no
+    var balance: Double = bal
+    override def toString = "["+nic+":"+accountNo +":"+ balance+"]"
+    def transfer(account: Account,amount:Double) = {
+      this.balance-=amount
+      account.balance+=amount
+    }
+
+  }
   var bank:List[Account]=List()
   
-  val find=(n:String,b:List[Account])=>
-  b.filter(x=>x.nic.equals(n))
+  val overdraft = (b:List[Account])=> b.filter(p=> p.balance<0)
+  println(overdraft(bank))
   
-  //List of Accounts with negative balances (Question 4.1)
-  val overdraft=(b:List[Account])=> b.filter(_<0)
+  val total = (b:List[Account])=> b.reduce((x,y)=> (new Account(x.nic,x.accountNo,x.balance+y.balance)))
+  println(total(bank).balance)
   
-  //Total of all account balances (Question 4.2)
-  val balance=(b:List[Account])=> b.reduce(_+_)
-  
-  //If balance is positive deposit interest is .05
-  //If balance is negative overdraft interest is .1 (Question 4.3)
-  
-  val b= some1(b+b*0.5)
-  val b= some2(b-b*0.1)
-  val interest=(b:List[Account])=>b.map(if (b>0) some1 else some2)
-  val balance=(b:List[Account])=> b.reduce(_+_)
-  
+  val interest = (b: List[Account])=> b.map(x=> {
+    if(x.balance<0)  (new Account(x.nic,x.accountNo,x.balance*1.05)) else (new Account(x.nic,x.accountNo,x.balance*1.1))})
+  println(interest(bank))
+
+
+
 }
